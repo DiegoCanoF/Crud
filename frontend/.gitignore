@@ -1,0 +1,9 @@
+/node_modules
+*.log
+
+# Ignorar el archivo package-lock.json
+package-lock.json
+
+# Ignorar otros archivos o carpetas
+.env
+
