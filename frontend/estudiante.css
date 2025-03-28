@@ -1,0 +1,115 @@
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+h1 {
+    color: #007B8B;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+    border-bottom: 3px solid #007B8B;
+    padding-bottom: 10px;
+}
+
+h2 {
+    color: #333;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+p {
+    background-color: white;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+p strong {
+    color: #007B8B;
+    margin-right: 10px;
+    display: inline-block;
+    width: 200px;
+}
+
+button {
+    background-color: #007B8B;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 10px 0;
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+button:hover {
+    background-color: #005B6B;
+    transform: translateY(-2px);
+}
+
+#btnSolicitarCuenta {
+    background-color: #009BA6;
+}
+
+#btnSolicitarCuenta:hover {
+    background-color: #007B8B;
+}
+
+button:first-of-type {
+    background-color: #E64A19;
+}
+
+button:first-of-type:hover {
+    background-color: #C41C10;
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    p strong {
+        width: 150px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+}
+
+/* Efecto de carga */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+span {
+    animation: fadeIn 0.5s ease-out;
+}

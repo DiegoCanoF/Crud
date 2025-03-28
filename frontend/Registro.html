@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="registro.css">
+  <title>Registro</title>
+
+</head>
+<body>
+
+  <div class="container">
+    <h2>Registro</h2>
+    <form id="registro-form">
+      <input type="text" id="nombre" placeholder="Nombre" required>
+      <input type="email" id="correo" placeholder="Correo electrónico" required>
+      <input type="password" id="contrasena" placeholder="Contraseña" required>
+      <select id="perfil" required>
+        <option value="estudiante">Estudiante</option>
+      </select>
+      <button type="submit">Registrar</button>
+      <div class="navigation-buttons">
+        <div>
+            |
+        </div>
+        <button onclick="window.location.href='index.html'">Volver al Inicio</button>
+        <div>
+            |
+        </div>
+        <button onclick="window.location.href='index.html'">Inicio</button>
+      </div>
+    </div>
+    </form>
+  </div>
+
+  <script>
+    const apiUrl = 'http://localhost:3000';
+
+    document.getElementById('registro-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById('nombre').value;
+      const correo = document.getElementById('correo').value;
+      const contrasena = document.getElementById('contrasena').value;
+      const perfil = document.getElementById('perfil').value;
+
+      fetch(`${apiUrl}/registro`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, correo, contrasena, perfil })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        if (data.message === 'Usuario registrado exitosamente') {
+          window.location.href = 'login.html';
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>

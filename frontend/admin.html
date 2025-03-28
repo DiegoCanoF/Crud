@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <h1>Bienvenido, Administrador</h1>
+    <button onclick="cerrarSesion()">Cerrar Sesión</button>
+
+    <h2>Estudiantes Registrados</h2>
+    <table border="1" id="tablaEstudiantes">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Correo Institucional</th>
+            <th>Número de Cuenta</th>
+            <th>Asignar</th>
+        </tr>
+    </table>
+
+
+    <h2>Solicitudes de estudiantes</h2>
+    <table border="1" id="tablaSolicitudes">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Aprobar</th>
+            <th>Eliminar</th>
+        </tr>
+    </table>
+
+    <script>
+        const apiUrl = 'http://localhost:3000';
+
+         // Mostrar estudiantes
+         document.addEventListener('DOMContentLoaded', function() {
+            fetch(`${apiUrl}/estudiantes`)
+            .then(response => response.json())
+            .then(data => {
+                const tabla = document.getElementById('tablaEstudiantes');
+                data.forEach(estudiante => {
+                    const row = tabla.insertRow();
+                    row.innerHTML = `
+                        <td>${estudiante.id}</td>
+                        <td>${estudiante.nombre}</td>
+                        <td>${estudiante.correo}</td>
+                        <td>${estudiante.correo_institucional || 'No asignado'}</td>
+                        <td>${estudiante.cuenta_asignada || 'No asignado'}</td>
+                        <td><button onclick="asignarCuenta(${estudiante.id})">Asignar</button></td>
+                    `;
+                });
+            });
+        });
+
+        // Función para asignar cuenta
+        function asignarCuenta(id) {
+            fetch(`${apiUrl}/asignar-cuenta/${id}`, { method: 'PUT' })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                location.reload(); // Recargar la página para ver los cambios
+            })
+            .catch(error => console.error('Error al asignar cuenta:', error));
+        }
+
+        // Función para aprobar una solicitud
+        function aprobarSolicitud(id) {
+            fetch(`${apiUrl}/aprobar-solicitud/${id}`, { method: 'PUT' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Solicitud aprobada exitosamente') {
+                        alert('Solicitud aprobada');
+                        location.reload(); // Recargar la página para ver los cambios
+                    } else {
+                        alert('Error al aprobar la solicitud');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al aprobar la solicitud:', error);
+                    alert('Error al aprobar la solicitud');
+                });
+        }
+
+        // Función para eliminar un estudiante
+        function eliminarEstudiante(id) {
+            fetch(`${apiUrl}/estudiantes/${id}`, { method: 'DELETE' })
+                .then(() => location.reload());
+        }
+
+        // Función para cerrar sesión
+        function cerrarSesion() {
+            localStorage.removeItem('usuario');
+            window.location.href = 'login.html';
+        }
+
+        // Al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch(`${apiUrl}/solicitudes`)
+                .then(response => response.json())
+                .then(data => {
+                    const tabla = document.getElementById('tablaSolicitudes');
+                    data.solicitudes.forEach(solicitud => {
+                        const row = tabla.insertRow();
+                        row.innerHTML = `
+                            <td>${solicitud.id}</td>
+                            <td>${solicitud.nombre}</td>
+                            <td>${solicitud.correo}</td>
+                            <td><button onclick="aprobarSolicitud(${solicitud.id})">✔️</button></td>
+                            <td><button onclick="eliminarEstudiante(${solicitud.id})">❌</button></td>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Error al cargar las solicitudes:', error));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Estudiante</title>
+    <link rel="stylesheet" href="estudiante.css"> <!-- Si ya tienes un archivo de estilos -->
+</head>
+<body>
+    <h1>Bienvenido, Estudiante</h1>
+    <button onclick="cerrarSesion()">Cerrar Sesión</button>
+
+    <h2>Mis Datos</h2>
+    <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+    <p><strong>Correo:</strong> <span id="correo"></span></p>
+    <p><strong>Número de Cuenta:</strong> <span id="cuenta_asignada"></span></p>
+    <p><strong>Correo Institucional:</strong> <span id="correo_institucional"></span></p>
+    <p><strong>Estado:</strong> <span id="estado"></span></p>
+
+    <h2>Solicitar Cuenta</h2>
+    <button id="btnSolicitarCuenta" onclick="solicitarCuenta()">Solicitar Cuenta</button>
+
+    <script>
+        const apiUrl = 'http://localhost:3000';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+            if (!usuario) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            fetch(`${apiUrl}/perfil/${usuario.id}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('nombre').textContent = data.nombre;
+                document.getElementById('correo').textContent = data.correo;
+
+                // Mostrar el número de cuenta y el correo institucional si están asignados
+                if (data.solicitud_aprobada) {
+                    if (data.cuenta_asignada && data.correo_institucional) {
+                        document.getElementById('cuenta_asignada').textContent = data.cuenta_asignada;
+                        document.getElementById('correo_institucional').textContent = data.correo_institucional;
+                        document.getElementById('estado').textContent = 'Aprobado';
+
+                        // Si ya tiene cuenta y correo asignados, ocultar el botón de solicitar cuenta
+                        document.getElementById('btnSolicitarCuenta').style.display = 'none';
+                    } else {
+                        document.getElementById('cuenta_asignada').textContent = 'Cuenta aprobada, pero aún no asignada';
+                        document.getElementById('correo_institucional').textContent = 'Correo institucional no asignado';
+                        document.getElementById('estado').textContent = 'Aprobado, pero aún no asignado';
+
+                        // Si está aprobado pero no tiene cuenta y correo, mostrar el botón de solicitar
+                        document.getElementById('btnSolicitarCuenta').style.display = 'block';
+                    }
+                } else {
+                    document.getElementById('cuenta_asignada').textContent = 'Pendiente';
+                    document.getElementById('correo_institucional').textContent = 'Pendiente';
+                    document.getElementById('estado').textContent = 'Pendiente';
+
+                    // Mostrar el botón de solicitar cuenta si la solicitud está pendiente
+                    document.getElementById('btnSolicitarCuenta').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error);
+                alert('Error al cargar los datos del estudiante');
+            });
+        });
+
+        function solicitarCuenta() {
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+            fetch('http://localhost:3000/solicitar-cuenta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: usuario.id })
+            }).then(() => alert('Solicitud enviada'))
+              .catch(error => {
+                console.error('Error al enviar la solicitud:', error);
+                alert('Hubo un problema al enviar la solicitud');
+            });
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuario');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
